@@ -29,7 +29,7 @@ cd CargoLocatorAPI
 ````
 4. Запустите приложение с помощью Docker Compose:
 ```bash
-docker-compose up
+docker-compose up -d
 ```
 5. API будет доступно по адресу http://localhost:8000/api/v1.
 ## Документация API
@@ -85,6 +85,19 @@ docker-compose up
 curl -X 'GET' \
   'http://127.0.0.1:8000/api/v1/cargos_filtered?weight_more=78&weight_less=305&distance_more=125&distance_less=212' \
   -H 'accept: application/json'
+```
+Пример запроса для создания груза:
+```bash
+curl -X 'POST' \
+  'http://127.0.0.1:8000/api/v1/cargos' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "pickup_zip": "12781",
+  "delivery_zip": "02360",
+  "weight": 17,
+  "description": "Small box"
+}'
 ```
 ## Лицензия
 <a href="https://github.com/Koludarov/CargoLocatorAPI/blob/main/LICENSE">MIT License</a>
