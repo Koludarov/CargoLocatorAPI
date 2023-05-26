@@ -56,7 +56,7 @@ async def get_all_cargos(
 ) -> CargoListResponse:
     """
     Получение списка грузов (локации pick-up, delivery,
-    количество ближайших машин до груза ( =< 450 миль))
+    количество ближайших машин до груза (не более 450 миль))
     """
     cargos = await db_cargos.filter_cargos(
         conn,

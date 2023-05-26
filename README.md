@@ -87,4 +87,4 @@ curl -X 'GET' \
   -H 'accept: application/json'
 ```
 ## Лицензия
-MIT License
+<a href="https://github.com/Koludarov/CargoLocatorAPI/blob/main/LICENSE">MIT License</a>
