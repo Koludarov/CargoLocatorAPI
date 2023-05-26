@@ -90,14 +90,15 @@ async def get_trucks_limited(
 
 async def get_trucks_list(
         conn: db_model.Connection,
-        location_id: str
+        location_id: str,
+        weight: int
 ) -> Optional[TrucksDistanceList]:
     """
     Функция для одноразового получения полного списка Машин и передачи его в get_distance_trucks_info
-    Получение списка TruckDistanceList(уникальный номер машины, расстояние до Груза)
+    Возвращение списка TruckDistanceList
     """
     trucks_list = await get_all_trucks(conn=conn)
-    trucks = await get_distance_trucks_info(conn, location_id, trucks_list)
+    trucks = await get_distance_trucks_info(conn, location_id, trucks_list, weight=weight)
     return trucks
 
 
@@ -107,8 +108,15 @@ async def get_distance_trucks_info(
         trucks_list: List[Truck],
         distance_less: int = None,
         distance_more: int = None,
+        weight: int = None
 ) -> Optional[TrucksDistanceList]:
-    """Получение списка TruckDistanceList(уникальный номер машины, расстояние до Груза)
+    """
+    Получение списка TruckDistanceList(Общее количество Машин;
+                                       доступные Машины;
+                                       Машины, у которых нет места для Груза)
+                     TruckDistance(уникальный номер машины;
+                                   вместимость;
+                                   расстояние до Груза)
        С возможностью фильтрации:
        - distance_more больше, чем n миль
        - distance_less меньше, чем n миль
@@ -128,19 +136,22 @@ async def get_distance_trucks_info(
             if distance <= distance_less:
                 trucks_less.append(TruckDistance(
                     truck_id=truck.uuid,
+                    capacity=truck.capacity,
                     distance=distance)
                 )
 
             if distance >= distance_more:
                 trucks_more.append(TruckDistance(
                     truck_id=truck.uuid,
+                    capacity=truck.capacity,
                     distance=distance)
                 )
 
         the_nearest_trucks = [truck for truck in trucks_less if truck in trucks_more]
         return TrucksDistanceList(
             total=len(the_nearest_trucks),
-            trucks=the_nearest_trucks
+            trucks_available=[truck for truck in the_nearest_trucks if truck.capacity >= weight],
+            trucks_not_enough_space=[truck for truck in the_nearest_trucks if truck.capacity < weight]
         )
 
 

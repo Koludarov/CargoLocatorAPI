@@ -18,12 +18,14 @@ class TruckUpdate(BaseModel):
 
 class TruckDistance(BaseModel):
     truck_id: str
+    capacity: int
     distance: float
 
 
 class TrucksDistanceList(BaseModel):
     total: int
-    trucks: List[TruckDistance]
+    trucks_available: List[TruckDistance]
+    trucks_not_enough_space: List[TruckDistance]
 
 
 class TruckResponse(BaseModel):

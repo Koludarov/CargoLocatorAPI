@@ -41,7 +41,10 @@ async def create_new_cargo(
 
     return CargoResponse(
         cargo=cargo,
-        trucks_info=await db_trucks.get_trucks_list(conn, cargo.pickup_location_id)
+        trucks_info=await db_trucks.get_trucks_list(
+            conn,
+            cargo.pickup_location_id,
+            cargo.weight)
     )
 
 
