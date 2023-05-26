@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from fastapi import (
     APIRouter,
@@ -11,6 +12,7 @@ from db import cargos as db_cargos
 from db import trucks as db_trucks
 
 from misc.consts import DISTANCE_USUAL
+from models.base import SuccessResponse
 from models.cargos import (
     CargoCreate,
     CargoUpdate,
@@ -105,20 +107,28 @@ async def get_cargo_by_id(
     return cargo
 
 
-@router.put("/cargos/{cargo_id}", status_code=204)
+@router.put("/cargos/{cargo_id}", response_model=SuccessResponse)
 async def update_cargo_by_id(
         cargo_id: int,
         cargo_update: CargoUpdate,
         conn: db_trucks.db_model = Depends(get_db)
-) -> None:
+) -> SuccessResponse:
     """Обновление веса и описания Груза по его id"""
-    await db_cargos.update_cargo(conn, cargo_id, cargo_update)
+    result = await db_cargos.update_cargo(conn, cargo_id, cargo_update)
+    if not result:
+        raise HTTPException(status_code=404, detail="Cargo not found")
+
+    return SuccessResponse(data=result)
 
 
-@router.delete("/cargos/{cargo_id}", status_code=204)
+@router.delete("/cargos/{cargo_id}", response_model=SuccessResponse)
 async def delete_cargo_by_id(
         cargo_id: int,
         conn: db_trucks.db_model = Depends(get_db)
-) -> None:
+) -> SuccessResponse:
     """Удаление Груза по его id"""
-    await db_cargos.delete_cargo(conn, cargo_id)
+    result = await db_cargos.delete_cargo(conn, cargo_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Cargo not found")
+
+    return SuccessResponse(data=result)

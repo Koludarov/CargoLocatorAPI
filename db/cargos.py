@@ -112,7 +112,9 @@ async def get_cargo(
             delivery_location=delivery_location,
             weight=cargo['weight'],
             description=cargo['description'],
-            trucks=await db_trucks.get_trucks_list(conn, cargo['pickup_id'])
+            trucks=await db_trucks.get_trucks_list(conn,
+                                                   cargo['pickup_id'],
+                                                   weight=cargo['weight'])
         )
 
 
@@ -120,25 +122,29 @@ async def update_cargo(
         conn: db_model.Connection,
         cargo_id: int,
         cargo: CargoUpdate
-) -> None:
+) -> Optional[Cargo]:
     """Обновление веса и описания Груза по id"""
     async with conn.transaction():
-        await conn.fetch(
-            "UPDATE cargos SET weight = $1, description = $2 WHERE id = $3",
+        cargo = await conn.fetchrow(
+            """UPDATE cargos SET weight = $1, description = $2 WHERE id = $3
+                RETURNING *
+            """,
             cargo.weight, cargo.description, cargo_id
         )
+        return db_model.record_to_model(Cargo, cargo)
 
 
 async def delete_cargo(
         conn: db_model.Connection,
         cargo_id: int
-) -> None:
+) -> Optional[Cargo]:
     """Удаление Груза по id"""
     async with conn.transaction():
-        await conn.fetch(
-            "DELETE FROM cargos WHERE id = $1",
+        cargo = await conn.fetchrow(
+            "DELETE FROM cargos WHERE id = $1 RETURNING *",
             cargo_id
         )
+        return db_model.record_to_model(Cargo, cargo)
 
 
 async def filter_cargos(
@@ -172,7 +178,8 @@ async def filter_cargos(
                 cargo['pickup_location_id'],
                 trucks_list,
                 distance_less=distance_less,
-                distance_more=distance_more
+                distance_more=distance_more,
+                weight=cargo['weight']
             )
 
             if trucks.total > 0:

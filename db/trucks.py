@@ -159,14 +159,15 @@ async def update_truck_location(
         conn: db_model.Connection,
         truck_id: int,
         zip_code: str
-) -> None:
+) -> Optional[Truck]:
     """Обновление локации Машины по её id"""
     async with conn.transaction():
         location = await db_locations.get_location_by_zip(conn, zip_code)
-        await conn.fetch(
-            "UPDATE trucks SET location_id = $1 WHERE id = $2",
+        truck = await conn.fetchrow(
+            "UPDATE trucks SET location_id = $1 WHERE id = $2 RETURNING *",
             location.id, truck_id
         )
+        return db_model.record_to_model(Truck, truck)
 
 
 async def update_all_trucks_locations(conn: db_model.Connection):

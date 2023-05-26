@@ -2,12 +2,14 @@ import logging
 
 from fastapi import (
     APIRouter,
-    Depends
+    Depends,
+    HTTPException,
 )
 
 from app.depends.db import get as get_db
 from db import trucks as db_trucks
 
+from models.base import SuccessResponse
 from models.trucks import (
     TruckUpdate,
     TrucksListResponse,
@@ -38,11 +40,15 @@ async def get_list_trucks(
     )
 
 
-@router.put("/trucks/{truck_id}", status_code=204)
+@router.put("/trucks/{truck_id}", response_model=SuccessResponse)
 async def update_truck(
         truck_id: int,
         truck_update: TruckUpdate,
         conn: db_trucks.db_model = Depends(get_db)
-) -> None:
+) -> SuccessResponse:
     """Обновление локации Машины по её id"""
-    await db_trucks.update_truck_location(conn, truck_id, truck_update.location_zip)
+    result = await db_trucks.update_truck_location(conn, truck_id, truck_update.location_zip)
+    if not result:
+        raise HTTPException(status_code=404, detail="Truck not found")
+
+    return SuccessResponse(data=result)
