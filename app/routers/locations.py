@@ -2,7 +2,8 @@ import logging
 
 from fastapi import (
     APIRouter,
-    Depends
+    Depends,
+    HTTPException
 )
 
 from app.depends.db import get as get_db
@@ -43,7 +44,11 @@ async def get_list_locations(
         conn: db_locations.db_model = Depends(get_db)
 ) -> Location:
     """Получение Локации по её id"""
-    return await db_locations.get_location_by_id(
+    location = await db_locations.get_location_by_id(
         conn=conn,
         location_id=location_id
     )
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+
+    return location
