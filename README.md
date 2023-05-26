@@ -39,21 +39,44 @@ docker-compose up
 
 Пример:
 ```json
-      "trucks_info": {
-        "total": 2,
-        "trucks_available": [
-          {
-            "truck_id": "2137N",
-            "capacity": 981,
-            "distance": 148.4
-          }
-        ],
-        "trucks_not_enough_space": [
-          {
-            "truck_id": "7923B",
-            "capacity": 126,
-            "distance": 191.5
-          }
+"trucks_info": {
+        "total": 5,
+        "trucks_available": {
+          "amount": 2,
+          "trucks": [
+            {
+              "truck_id": "5428U",
+              "capacity": 692,
+              "distance": 243.9
+            },
+            {
+              "truck_id": "9941U",
+              "capacity": 791,
+              "distance": 380.5
+            }
+          ]
+        },
+        "trucks_not_enough_space": {
+          "amount": 3,
+          "trucks": [
+            {
+              "truck_id": "9634V",
+              "capacity": 199,
+              "distance": 100.8
+            },
+            {
+              "truck_id": "9238W",
+              "capacity": 369,
+              "distance": 110.1
+            },
+            {
+              "truck_id": "3857L",
+              "capacity": 12,
+              "distance": 294.6
+            }
+          ]
+        }
+      }
 ```
 Реализована фильтрация списка грузов (вес, мили ближайших машин до грузов):
 

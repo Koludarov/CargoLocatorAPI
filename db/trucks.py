@@ -11,6 +11,7 @@ from models.trucks import (
     Truck,
     TruckDistance,
     TruckResponse,
+    TruckSimpleList,
     TrucksDistanceList
 )
 
@@ -148,10 +149,14 @@ async def get_distance_trucks_info(
                 )
 
         the_nearest_trucks = [truck for truck in trucks_less if truck in trucks_more]
+        trucks_available = [truck for truck in the_nearest_trucks if truck.capacity >= weight]
+        trucks_not_enough_space = [truck for truck in the_nearest_trucks if truck.capacity < weight]
         return TrucksDistanceList(
             total=len(the_nearest_trucks),
-            trucks_available=[truck for truck in the_nearest_trucks if truck.capacity >= weight],
-            trucks_not_enough_space=[truck for truck in the_nearest_trucks if truck.capacity < weight]
+            trucks_available=TruckSimpleList(amount=len(trucks_available),
+                                             trucks=trucks_available),
+            trucks_not_enough_space=TruckSimpleList(amount=len(trucks_not_enough_space),
+                                                    trucks=trucks_not_enough_space)
         )
 
 

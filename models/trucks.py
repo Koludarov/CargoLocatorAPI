@@ -22,10 +22,15 @@ class TruckDistance(BaseModel):
     distance: float
 
 
+class TruckSimpleList(BaseModel):
+    amount: int
+    trucks: List[TruckDistance]
+
+
 class TrucksDistanceList(BaseModel):
     total: int
-    trucks_available: List[TruckDistance]
-    trucks_not_enough_space: List[TruckDistance]
+    trucks_available: TruckSimpleList
+    trucks_not_enough_space: TruckSimpleList
 
 
 class TruckResponse(BaseModel):
