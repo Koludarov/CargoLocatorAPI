@@ -21,9 +21,9 @@ async def update_locations_periodically():
         host="db"
     )
     while True:
+        await asyncio.sleep(180)
         await update_all_trucks_locations(conn)
         logger.info("Trucks' locations updated")
-        await asyncio.sleep(180)  # Sleep for 180 seconds (3 minutes)
 
 
 if __name__ == "__main__":
