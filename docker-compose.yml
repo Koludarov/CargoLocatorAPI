@@ -11,13 +11,15 @@ services:
       - dbmate
   db:
     image: postgres
+    env_file:
+      - .env
     ports:
       - "5433:5432"
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=locator_api_db
+      - POSTGRES_USER=$DB_USER
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=$DB_NAME
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
@@ -29,6 +31,8 @@ services:
   dbmate:
     image: amacneil/dbmate
     command: -d "/code/etc/db/migrations" up
+    env_file:
+      - .env
     volumes:
       - .:/code
     links:
@@ -37,7 +41,8 @@ services:
       db:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/locator_api_db?sslmode=disable
+    - DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST/$DB_NAME?sslmode=disable
+
 
   trucks_mover:
     build: .
