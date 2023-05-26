@@ -163,6 +163,8 @@ async def update_truck_location(
     """Обновление локации Машины по её id"""
     async with conn.transaction():
         location = await db_locations.get_location_by_zip(conn, zip_code)
+        if not location:
+            return None
         truck = await conn.fetchrow(
             "UPDATE trucks SET location_id = $1 WHERE id = $2 RETURNING *",
             location.id, truck_id

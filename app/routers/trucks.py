@@ -49,6 +49,6 @@ async def update_truck(
     """Обновление локации Машины по её id"""
     result = await db_trucks.update_truck_location(conn, truck_id, truck_update.location_zip)
     if not result:
-        raise HTTPException(status_code=404, detail="Truck not found")
+        raise HTTPException(status_code=422, detail="Incorrect input(truck_id or zipcode)")
 
     return SuccessResponse(data=result)
