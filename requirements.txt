@@ -1,0 +1,13 @@
+aiocron==1.8
+anyio==3.6.2
+asyncpg==0.27.0
+click==8.1.3
+colorama==0.4.6
+fastapi==0.95.2
+geographiclib==2.0
+geopy==2.3.0
+pydantic==1.10.8
+sniffio==1.3.0
+starlette==0.27.0
+typing_extensions==4.6.1
+uvicorn==0.22.0

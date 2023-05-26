@@ -1,0 +1,50 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - dbmate
+  db:
+    image: postgres
+    ports:
+      - "5433:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=locator_api_db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  dbmate:
+    image: amacneil/dbmate
+    command: -d "/code/etc/db/migrations" up
+    volumes:
+      - .:/code
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/locator_api_db?sslmode=disable
+
+  trucks_mover:
+    build: .
+    command: bash -c "python updating_locations.py"
+    depends_on:
+      - db
+      - app
+
+volumes:
+  db-data:
