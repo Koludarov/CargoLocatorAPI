@@ -10,7 +10,7 @@ from db import trucks as db_trucks
 from etc.config import CSV_FILE_PATH
 from models.cargos import Location
 from models.trucks import Truck
-from misc.generate import generate_unique_id
+from misc.distance_calculator_with_uuid import generate_unique_id
 from misc import db_model
 
 logger = logging.getLogger(__name__)

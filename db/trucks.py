@@ -5,7 +5,7 @@ from typing import List, Optional
 from db import locations as db_locations
 from misc.consts import DISTANCE_LESS, DISTANCE_MORE
 from misc import db_model
-from misc.generate import calculate_distance
+from misc.distance_calculator_with_uuid import calculate_distance
 from models.locations import Location
 from models.trucks import (
     Truck,
